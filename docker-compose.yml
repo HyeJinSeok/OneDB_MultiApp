@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysqldb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: fisa
+      MYSQL_USER: user01
+      MYSQL_PASSWORD: user01
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - shared-net
+
+  app1:
+    build:
+      context: ./app1
+    container_name: springbootapp1
+    ports:
+      - "8081:8099"
+    depends_on:
+      - db
+    networks:
+      - shared-net
+
+  app2:
+    build:
+      context: ./app2
+    container_name: springbootapp2
+    ports:
+      - "8082:8099"
+    depends_on:
+      - db
+    networks:
+      - shared-net
+
+networks:
+  shared-net:
+    driver: bridge
+
+volumes:
+  db-data:
